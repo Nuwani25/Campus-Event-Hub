@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Event Hub - Submit Feedback</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body style="background-color: #f0f2f5; color: #333; line-height: 1.6;">
+  <!-- Header -->
+  <header style="background: linear-gradient(135deg, #1e3c72, #2a5298); padding: 15px 0; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <style>
+      .active {
+        font-weight: bold;
+        border-bottom: 2px solid #fff;
+      }
+      .logout-btn:hover {
+        background: #c0392b;
+      }
+    </style>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Campus Event Hub</h1>
+      </div>
+      <nav style="display: flex; align-items: center;">
+        <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
+          <li style="margin: 0 15px;"><a href="home.html" style="color: white; text-decoration: none;">Home</a></li>
+          <li style="margin: 0 15px;"><a href="events.html" style="color: white; text-decoration: none;">Create Event</a></li>
+          <li style="margin: 0 15px;"><a href="register.html" style="color: white; text-decoration: none;">Join Event</a></li>
+          <li style="margin: 0 15px;"><a href="feedback.html" style="color: white; text-decoration: none;">Feedback</a></li>
+          <li style="margin: 0 15px;"><a href="my-events.html" style="color: white; text-decoration: none;">My Events</a></li>
+        </ul>
+        <button 
+          class="logout-btn"
+          id="logoutBtn"
+          style="margin-left: 25px; padding: 8px 18px; background: #e74c3c; border: none; border-radius: 4px; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+          Logout
+        </button>
+      </nav>
+    </div>
+    <script>
+      // Get the current page path (e.g., "events.html")
+      const currentPath = window.location.pathname.split("/").pop() || "index.html";
+      document.querySelectorAll('nav ul li a').forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath === currentPath) {
+          link.classList.add('active');
+        }
+      });
+
+      // Logout confirmation functionality
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (confirm("Are you sure you want to log out?")) {
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userDept');
+            localStorage.removeItem('userYear');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+          }
+        });
+      }
+    </script>
+  </header>
+
+  <!-- Main Content -->
+  <main style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="font-size: 32px; color: #1e3c72; margin-bottom: 15px;">Submit Your Feedback</h2>
+        <p style="color: #666; max-width: 600px;">Help us improve future events by sharing your experience.</p>
+      </div>
+      
+      <div style="display: flex; width: 100%; max-width: 900px; gap: 30px;">
+        <div style="flex: 3; background-color: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <form id="feedbackForm">
+            <div style="margin-bottom: 20px;">
+              <label for="studentEmail" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Email Address</label>
+              <input type="email" id="studentEmail" placeholder="your.email@example.com" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="eventName" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Event Name</label>
+              <select id="eventName" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; background-color: white;">
+                <option value="">-- Select the event --</option>
+              </select>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #333;">Rating</label>
+              <div style="display: flex; gap: 15px;">
+                <div style="flex: 1; text-align: center;">
+                  <input type="radio" id="star1" name="rating" value="1" style="display: none;">
+                  <label for="star1" style="display: inline-block; padding: 10px; border-radius: 50%; background-color: #f0f0f0; cursor: pointer; transition: all 0.3s ease; width: 20px; height: 20px; line-height: 20px; color: #888;">1</label>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                  <input type="radio" id="star2" name="rating" value="2" style="display: none;">
+                  <label for="star2" style="display: inline-block; padding: 10px; border-radius: 50%; background-color: #f0f0f0; cursor: pointer; transition: all 0.3s ease; width: 20px; height: 20px; line-height: 20px; color: #888;">2</label>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                  <input type="radio" id="star3" name="rating" value="3" style="display: none;">
+                  <label for="star3" style="display: inline-block; padding: 10px; border-radius: 50%; background-color: #f0f0f0; cursor: pointer; transition: all 0.3s ease; width: 20px; height: 20px; line-height: 20px; color: #888;">3</label>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                  <input type="radio" id="star4" name="rating" value="4" style="display: none;">
+                  <label for="star4" style="display: inline-block; padding: 10px; border-radius: 50%; background-color: #f0f0f0; cursor: pointer; transition: all 0.3s ease; width: 20px; height: 20px; line-height: 20px; color: #888;">4</label>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                  <input type="radio" id="star5" name="rating" value="5" style="display: none;">
+                  <label for="star5" style="display: inline-block; padding: 10px; border-radius: 50%; background-color: #f0f0f0; cursor: pointer; transition: all 0.3s ease; width: 20px; height: 20px; line-height: 20px; color: #888;">5</label>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <span style="font-size: 14px; color: #888;">Poor</span>
+                <span style="font-size: 14px; color: #888;">Excellent</span>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="comments" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Comments</label>
+              <textarea id="comments" placeholder="Please share your thoughts about the event" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; min-height: 150px; resize: vertical;"></textarea>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="improvements" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Suggestions for Improvement</label>
+              <textarea id="improvements" placeholder="How could we make this event better?" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; min-height: 100px; resize: vertical;"></textarea>
+            </div>
+            
+            <div style="margin-top: 25px;">
+              <button type="submit" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease;">Submit Feedback</button>
+            </div>
+          </form>
+        </div>
+        
+        <div style="flex: 2; background-color: white; border-radius: 10px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <h3 style="font-size: 20px; color: #1e3c72; margin-bottom: 20px;">Why Your Feedback Matters</h3>
+          
+          <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">🔍 Event Improvement</h4>
+            <p style="color: #666; font-size: 14px;">Your feedback helps organizers improve future events and address any issues.</p>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">💡 New Ideas</h4>
+            <p style="color: #666; font-size: 14px;">Share your suggestions for activities or topics you'd like to see at upcoming events.</p>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">📊 Quality Assessment</h4>
+            <p style="color: #666; font-size: 14px;">Help us maintain high standards by rating the events you attend.</p>
+          </div>
+          
+          <div>
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">🎓 Student Voice</h4>
+            <p style="color: #666; font-size: 14px;">Your opinions ensure that campus events reflect student interests and needs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background-color: #333; color: white; padding: 40px 0; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Campus Event Hub</h3>
+          <p style="color: #aaa; line-height: 1.6; margin-bottom: 20px;">Connecting students with events and activities across campus. Register, participate, and share your feedback.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Quick Links</h3>
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><a href="index.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Register</a></li>
+            <li style="margin-bottom: 10px;"><a href="events.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Create Event</a></li>
+            <li style="margin-bottom: 10px;"><a href="register.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Join Event</a></li>
+            <li style="margin-bottom: 10px;"><a href="feedback.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Feedback</a></li>
+          </ul>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Contact Us</h3>
+          <p style="color: #aaa; margin-bottom: 10px;">Email: info@campuseventhub.com</p>
+          <p style="color: #aaa; margin-bottom: 10px;">Phone: +1 (123) 456-7890</p>
+          <p style="color: #aaa;">Address: 123 University Ave, Campus City</p>
+        </div>
+      </div>
+      
+      <div style="border-top: 1px solid #444; padding-top: 20px; margin-top: 20px; text-align: center;">
+        <p style="color: #aaa;">© 2025 Campus Event Hub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Style the rating stars
+    const stars = document.querySelectorAll('input[name="rating"]');
+    const starLabels = document.querySelectorAll('label[for^="star"]');
+    
+    stars.forEach(star => {
+      star.addEventListener('change', function() {
+        starLabels.forEach(label => {
+          label.style.backgroundColor = '#f0f0f0';
+          label.style.color = '#888';
+        });
+        
+        const rating = parseInt(this.value);
+        for (let i = 0; i < rating; i++) {
+          starLabels[i].style.backgroundColor = '#ffbf00';
+          starLabels[i].style.color = '#fff';
+        }
+      });
+    });
+    
+    // Function to load events for the dropdown
+    async function loadEventsForFeedback() {
+      try {
+        const response = await fetch('http://localhost:3000/events');
+        const events = await response.json();
+        
+        const eventSelect = document.getElementById('eventName');
+        
+        if (events.length === 0) {
+          eventSelect.innerHTML = '<option value="">No events available</option>';
+          return;
+        }
+        
+        eventSelect.innerHTML = '<option value="">-- Select the event --</option>';
+        
+        events.forEach(event => {
+          const option = document.createElement('option');
+          option.value = event.name;
+          option.textContent = event.name;
+          eventSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading events:', error);
+        document.getElementById('eventName').innerHTML = '<option value="">Failed to load events</option>';
+      }
+    }
+
+    // Load events when page loads
+    document.addEventListener('DOMContentLoaded', loadEventsForFeedback);
+
+    // Handle form submission
+    document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const studentEmail = document.getElementById('studentEmail').value;
+      const eventName = document.getElementById('eventName').value;
+      
+      let rating = null;
+      document.querySelectorAll('input[name="rating"]').forEach(radio => {
+        if (radio.checked) {
+          rating = radio.value;
+        }
+      });
+      
+      if (!rating) {
+        alert('Please select a rating.');
+        return;
+      }
+      
+      const comments = document.getElementById('comments').value;
+      const improvements = document.getElementById('improvements').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/feedbacks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            studentEmail, 
+            eventName, 
+            rating, 
+            comments,
+            improvements: improvements || undefined
+          })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('Thank you for your feedback!');
+          document.getElementById('feedbackForm').reset();
+          starLabels.forEach(label => {
+            label.style.backgroundColor = '#f0f0f0';
+            label.style.color = '#888';
+          });
+        } else {
+          alert(`Failed to submit feedback: ${result.message}`);
+        }
+      } catch (error) {
+        alert('Error connecting to server. Please try again later.');
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

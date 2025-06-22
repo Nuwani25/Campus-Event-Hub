@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Event Hub - Event Registration</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body style="background-color: #f0f2f5; color: #333; line-height: 1.6;">
+  <!-- Header -->
+  <header style="background: linear-gradient(135deg, #1e3c72, #2a5298); padding: 15px 0; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <style>
+      .active {
+        font-weight: bold !important;
+        border-bottom: 2px solid #fff;
+      }
+      .logout-btn {
+        margin-left: 25px;
+        padding: 8px 18px;
+        background: #e74c3c;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .logout-btn:hover {
+        background: #c0392b;
+      }
+    </style>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Campus Event Hub</h1>
+      </div>
+      <nav style="display: flex; align-items: center;">
+        <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
+          <li style="margin: 0 15px;"><a href="home.html" style="color: white; text-decoration: none;">Home</a></li>
+          <li style="margin: 0 15px;"><a href="events.html" style="color: white; text-decoration: none;">Create Event</a></li>
+          <li style="margin: 0 15px;"><a href="register.html" style="color: white; text-decoration: none;">Join Event</a></li>
+          <li style="margin: 0 15px;"><a href="feedback.html" style="color: white; text-decoration: none;">Feedback</a></li>
+          <li style="margin: 0 15px;"><a href="my-events.html" style="color: white; text-decoration: none;">My Events</a></li>
+        </ul>
+        <button 
+          class="logout-btn"
+          id="logoutBtn"
+          style="margin-left: 25px; padding: 8px 18px; background: #e74c3c; border: none; border-radius: 4px; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+          Logout
+        </button>
+      </nav>
+    </div>
+    <script>
+      // Logout confirmation functionality
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (confirm("Are you sure you want to log out?")) {
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userDept');
+            localStorage.removeItem('userYear');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+          }
+        });
+      }
+
+      // Get the current page filename (e.g., "events.html")
+      const currentPath = window.location.pathname.split("/").pop() || "index.html";
+      // Highlight the current page link
+      document.querySelectorAll('nav ul li a').forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    </script>
+  </header>
+
+  <!-- Main Content -->
+  <main style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="font-size: 32px; color: #1e3c72; margin-bottom: 15px;">Event Registration</h2>
+        <p style="color: #666; max-width: 600px;">Join upcoming campus events and activities by registering below.</p>
+      </div>
+      
+      <div style="display: flex; width: 100%; max-width: 900px; gap: 30px; margin-bottom: 40px;">
+        <div style="flex: 1; background-color: white; border-radius: 10px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <h3 style="font-size: 20px; color: #1e3c72; margin-bottom: 15px;">Upcoming Events</h3>
+          <div id="eventsList" style="max-height: 300px; overflow-y: auto; padding-right: 10px;">
+            <p style="color: #666; text-align: center; padding: 20px 0;">Loading events...</p>
+          </div>
+        </div>
+        
+        <div style="flex: 1; background-color: white; border-radius: 10px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <h3 style="font-size: 20px; color: #1e3c72; margin-bottom: 20px;">Register for an Event</h3>
+          <form id="registrationForm">
+            <div style="margin-bottom: 20px;">
+              <label for="studentEmail" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Email Address</label>
+              <input type="email" id="studentEmail" placeholder="your.email@example.com" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="eventId" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Select Event</label>
+              <select id="eventId" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; background-color: white;">
+                <option value="">-- Select an event --</option>
+              </select>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="registrationType" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Registration Type</label>
+              <select id="registrationType" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; background-color: white;">
+                <option value="">-- Select type --</option>
+                <option value="Guest">Guest</option>
+                <option value="Participant">Participant</option>
+                <option value="Volunteer">Volunteer</option>
+              </select>
+            </div>
+            
+            <div style="margin-top: 15px;">
+              <button type="submit" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease;">Register for Event</button>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+              <p style="color: #666;">Not registered yet? <a href="index.html" style="color: #1e3c72; text-decoration: none; font-weight: 600;">Create an account</a></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background-color: #333; color: white; padding: 40px 0; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Campus Event Hub</h3>
+          <p style="color: #aaa; line-height: 1.6; margin-bottom: 20px;">Connecting students with events and activities across campus. Register, participate, and share your feedback.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Quick Links</h3>
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><a href="index.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Register</a></li>
+            <li style="margin-bottom: 10px;"><a href="events.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Create Event</a></li>
+            <li style="margin-bottom: 10px;"><a href="register.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Join Event</a></li>
+            <li style="margin-bottom: 10px;"><a href="feedback.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Feedback</a></li>
+          </ul>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Contact Us</h3>
+          <p style="color: #aaa; margin-bottom: 10px;">Email: info@campuseventhub.com</p>
+          <p style="color: #aaa; margin-bottom: 10px;">Phone: +1 (123) 456-7890</p>
+          <p style="color: #aaa;">Address: 123 University Ave, Campus City</p>
+        </div>
+      </div>
+      
+      <div style="border-top: 1px solid #444; padding-top: 20px; margin-top: 20px; text-align: center;">
+        <p style="color: #aaa;">© 2025 Campus Event Hub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Function to format date for display
+    function formatDate(dateString) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    }
+
+    // Function to load and display events list
+    async function loadEvents() {
+      try {
+        const response = await fetch('http://localhost:3000/events');
+        const events = await response.json();
+        
+        const eventsListDiv = document.getElementById('eventsList');
+        const eventSelect = document.getElementById('eventId');
+        
+        eventsListDiv.innerHTML = '';
+        eventSelect.innerHTML = '<option value="">-- Select an event --</option>';
+        
+        if (events.length === 0) {
+          eventsListDiv.innerHTML = '<p style="color: #666; text-align: center; padding: 20px 0;">No events available at the moment.</p>';
+          return;
+        }
+        
+        events.forEach(event => {
+          const eventCard = document.createElement('div');
+          eventCard.style.padding = '15px';
+          eventCard.style.borderBottom = '1px solid #eee';
+          eventCard.style.marginBottom = '10px';
+          
+          eventCard.innerHTML = `
+            <h4 style="color: #1e3c72; margin-bottom: 5px;">${event.name}</h4>
+            <p style="color: #666; font-size: 14px; margin-bottom: 5px;"><strong>Date:</strong> ${formatDate(event.date)}</p>
+            <p style="color: #666; font-size: 14px; margin-bottom: 5px;"><strong>Location:</strong> ${event.location}</p>
+            <p style="color: #666; font-size: 14px; margin-bottom: 5px;"><strong>Organizer:</strong> ${event.organizer}</p>
+          `;
+          
+          eventsListDiv.appendChild(eventCard);
+          
+          const option = document.createElement('option');
+          option.value = event._id || event.id;
+          option.textContent = event.name;
+          eventSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading events:', error);
+        document.getElementById('eventsList').innerHTML = '<p style="color: #666; text-align: center; padding: 20px 0;">Failed to load events. Please try again later.</p>';
+      }
+    }
+
+    // Load events when page loads
+    document.addEventListener('DOMContentLoaded', loadEvents);
+
+    // Handle form submission
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const studentEmail = document.getElementById('studentEmail').value;
+      const eventId = document.getElementById('eventId').value;
+      const registrationType = document.getElementById('registrationType').value;
+
+      if (!eventId) {
+        alert('Please select an event to register for.');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/registrations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ studentEmail, eventId, registrationType })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('Registration successful! You are now registered for this event.');
+          document.getElementById('registrationForm').reset();
+        } else {
+          alert(`Registration failed: ${result.message}`);
+        }
+      } catch (error) {
+        alert('Error connecting to server. Please try again later.');
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

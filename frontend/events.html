@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Event Hub - Create Event</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body style="background-color: #f0f2f5; color: #333; line-height: 1.6;">
+  <!-- Header -->
+  <header style="background: linear-gradient(135deg, #1e3c72, #2a5298); padding: 15px 0; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <style>
+      .active {
+        font-weight: bold !important;
+        border-bottom: 2px solid #fff;
+      }
+      .logout-btn {
+        margin-left: 25px;
+        padding: 8px 18px;
+        background: #e74c3c;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .logout-btn:hover {
+        background: #c0392b;
+      }
+    </style>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Campus Event Hub</h1>
+      </div>
+      <nav style="display: flex; align-items: center;">
+        <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
+          <li style="margin: 0 15px;"><a href="home.html" style="color: white; text-decoration: none;">Home</a></li>
+          <li style="margin: 0 15px;"><a href="events.html" style="color: white; text-decoration: none;">Create Event</a></li>
+          <li style="margin: 0 15px;"><a href="register.html" style="color: white; text-decoration: none;">Join Event</a></li>
+          <li style="margin: 0 15px;"><a href="feedback.html" style="color: white; text-decoration: none;">Feedback</a></li>
+          <li style="margin: 0 15px;"><a href="my-events.html" style="color: white; text-decoration: none;">My Events</a></li>
+        </ul>
+        <button 
+          class="logout-btn"
+          id="logoutBtn"
+          style="margin-left: 25px; padding: 8px 18px; background: #e74c3c; border: none; border-radius: 4px; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+          Logout
+        </button>
+      </nav>
+    </div>
+    <script>
+      // Logout confirmation functionality
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (confirm("Are you sure you want to log out?")) {
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userDept');
+            localStorage.removeItem('userYear');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+          }
+        });
+      }
+
+      // Get the current page filename (e.g., "events.html")
+      const currentPath = window.location.pathname.split("/").pop() || "index.html";
+      // Highlight the current page link
+      document.querySelectorAll('nav ul li a').forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    </script>
+  </header>
+
+  <!-- Main Content -->
+  <main style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="font-size: 32px; color: #1e3c72; margin-bottom: 15px;">Create a New Event</h2>
+        <p style="color: #666; max-width: 600px;">Host your own event and invite students from across campus.</p>
+      </div>
+      
+      <div style="display: flex; width: 100%; max-width: 900px; gap: 30px;">
+        <div style="flex: 2; background-color: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <form id="eventForm">
+            <div style="margin-bottom: 20px;">
+              <label for="eventName" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Event Name</label>
+              <input type="text" id="eventName" placeholder="Give your event a catchy name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+            </div>
+            
+            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+              <div style="flex: 1;">
+                <label for="eventDate" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Event Date</label>
+                <input type="date" id="eventDate" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+              </div>
+              
+              <div style="flex: 1;">
+                <label for="eventTime" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Event Time</label>
+                <input type="time" id="eventTime" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="location" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Event Location</label>
+              <input type="text" id="location" placeholder="Building name, room number, etc." required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="organizer" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Organizer Name</label>
+              <input type="text" id="organizer" placeholder="Department, club, or your name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="description" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Event Description</label>
+              <textarea id="description" placeholder="Provide details about your event" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; min-height: 120px; resize: vertical;"></textarea>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="capacity" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Maximum Capacity</label>
+              <input type="number" id="capacity" placeholder="Number of attendees" min="1" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+            </div>
+            
+            <div style="margin-top: 25px;">
+              <button type="submit" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease;">Create Event</button>
+            </div>
+          </form>
+        </div>
+        
+        <div style="flex: 1; background-color: white; border-radius: 10px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <h3 style="font-size: 20px; color: #1e3c72; margin-bottom: 20px;">Tips for Organizers</h3>
+          
+          <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">📅 Plan Ahead</h4>
+            <p style="color: #666; font-size: 14px;">Create your event at least 2 weeks in advance to give attendees time to register.</p>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">✨ Descriptive Details</h4>
+            <p style="color: #666; font-size: 14px;">Provide clear information about what attendees can expect and any requirements.</p>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">👥 Know Your Audience</h4>
+            <p style="color: #666; font-size: 14px;">Consider which departments or student groups would be most interested in your event.</p>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">📣 Promotion</h4>
+            <p style="color: #666; font-size: 14px;">Share your event on social media and department notice boards.</p>
+          </div>
+          
+          <div>
+            <h4 style="font-size: 16px; color: #444; margin-bottom: 8px;">📊 Feedback</h4>
+            <p style="color: #666; font-size: 14px;">After your event, encourage attendees to submit feedback to improve future events.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background-color: #333; color: white; padding: 40px 0; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Campus Event Hub</h3>
+          <p style="color: #aaa; line-height: 1.6; margin-bottom: 20px;">Connecting students with events and activities across campus. Register, participate, and share your feedback.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Quick Links</h3>
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><a href="index.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Register</a></li>
+            <li style="margin-bottom: 10px;"><a href="events.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Create Event</a></li>
+            <li style="margin-bottom: 10px;"><a href="register.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Join Event</a></li>
+            <li style="margin-bottom: 10px;"><a href="feedback.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Feedback</a></li>
+          </ul>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Contact Us</h3>
+          <p style="color: #aaa; margin-bottom: 10px;">Email: info@campuseventhub.com</p>
+          <p style="color: #aaa; margin-bottom: 10px;">Phone: +1 (123) 456-7890</p>
+          <p style="color: #aaa;">Address: 123 University Ave, Campus City</p>
+        </div>
+      </div>
+      
+      <div style="border-top: 1px solid #444; padding-top: 20px; margin-top: 20px; text-align: center;">
+        <p style="color: #aaa;">© 2025 Campus Event Hub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Get today's date in YYYY-MM-DD format for the min attribute
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('eventDate').min = today;
+    
+    // Handle form submission
+    document.getElementById('eventForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('eventName').value;
+      const date = document.getElementById('eventDate').value;
+      const time = document.getElementById('eventTime').value;
+      const description = document.getElementById('description').value;
+      const organizer = document.getElementById('organizer').value;
+      const location = document.getElementById('location').value;
+      const capacity = document.getElementById('capacity').value;
+
+      // Combine date and time for the backend
+      const dateTime = `${date}T${time}:00`;
+
+      try {
+        const token = localStorage.getItem('token');
+
+        const response = await fetch('http://localhost:3000/events', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ 
+            name, 
+            date: dateTime, 
+            description, 
+            organizer, 
+            location,
+            capacity: capacity || undefined
+          })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('Event created successfully!');
+          document.getElementById('eventForm').reset();
+        } else {
+          alert(`Failed to create event: ${result.message}\n${result.error || ''}`);
+        }
+      } catch (error) {
+        alert('Error connecting to server. Please try again later.');
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

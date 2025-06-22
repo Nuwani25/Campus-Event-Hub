@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Events | Campus Event Hub</title>
+</head>
+<body style="background-color: #f0f2f5; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+  <!-- Header -->
+  <header style="background: linear-gradient(135deg, #1e3c72, #2a5298); padding: 15px 0; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <style>
+      .active {
+        font-weight: bold !important;
+        border-bottom: 2px solid #fff;
+      }
+      .logout-btn {
+        margin-left: 25px;
+        padding: 8px 18px;
+        background: #e74c3c;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .logout-btn:hover {
+        background: #c0392b;
+      }
+    </style>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Campus Event Hub</h1>
+      </div>
+      <nav style="display: flex; align-items: center;">
+        <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
+          <li style="margin: 0 15px;"><a href="home.html" style="color: white; text-decoration: none;">Home</a></li>
+          <li style="margin: 0 15px;"><a href="events.html" style="color: white; text-decoration: none;">Create Event</a></li>
+          <li style="margin: 0 15px;"><a href="register.html" style="color: white; text-decoration: none;">Join Event</a></li>
+          <li style="margin: 0 15px;"><a href="feedback.html" style="color: white; text-decoration: none;">Feedback</a></li>
+          <li style="margin: 0 15px;"><a href="my-events.html" style="color: white; text-decoration: none;">My Events</a></li>
+        </ul>
+        <button 
+          class="logout-btn"
+          id="logoutBtn"
+          style="margin-left: 25px; padding: 8px 18px; background: #e74c3c; border: none; border-radius: 4px; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+          Logout
+        </button>
+      </nav>
+    </div>
+    <script>
+      // Logout confirmation functionality
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (confirm("Are you sure you want to log out?")) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userDept');
+            localStorage.removeItem('userYear');
+            window.location.href = 'login.html';
+          }
+        });
+      }
+
+      // Highlight the current page link
+      const currentPath = window.location.pathname.split("/").pop() || "index.html";
+      document.querySelectorAll('nav ul li a').forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    </script>
+  </header>
+
+  <main style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
+    <h2 style="font-size: 32px; color: #1e3c72; margin-bottom: 15px; text-align:center;">My Created Events</h2>
+    <div id="eventsContainer" style="margin-top: 30px;"></div>
+  </main>
+
+  <!-- Edit Event Modal -->
+  <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,60,114,0.18); z-index:1000; align-items:center; justify-content:center;">
+    <form id="editForm" style="background:white; padding:30px; border-radius:10px; max-width:400px; margin:auto; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+      <h3 style="margin-bottom:20px; color:#1e3c72;">Edit Event</h3>
+      <input type="hidden" id="editEventId" />
+      <div style="margin-bottom:15px;">
+        <label for="editName">Name</label>
+        <input type="text" id="editName" required style="width:100%; padding:8px;">
+      </div>
+      <div style="margin-bottom:15px;">
+        <label for="editDate">Date</label>
+        <input type="date" id="editDate" required style="width:100%; padding:8px;">
+      </div>
+      <div style="margin-bottom:15px;">
+        <label for="editTime">Time</label>
+        <input type="time" id="editTime" required style="width:100%; padding:8px;">
+      </div>
+      <div style="margin-bottom:15px;">
+        <label for="editLocation">Location</label>
+        <input type="text" id="editLocation" required style="width:100%; padding:8px;">
+      </div>
+      <div style="margin-bottom:15px;">
+        <label for="editOrganizer">Organizer</label>
+        <input type="text" id="editOrganizer" required style="width:100%; padding:8px;">
+      </div>
+      <div style="margin-bottom:15px;">
+        <label for="editDescription">Description</label>
+        <textarea id="editDescription" required style="width:100%; padding:8px;"></textarea>
+      </div>
+      <div style="margin-bottom:15px;">
+        <label for="editCapacity">Capacity</label>
+        <input type="number" id="editCapacity" min="1" style="width:100%; padding:8px;">
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button type="submit" style="flex:1; background:#1e3c72; color:white; border:none; padding:10px; border-radius:6px;">Save</button>
+        <button type="button" onclick="closeEditModal()" style="flex:1; background:#e53935; color:white; border:none; padding:10px; border-radius:6px;">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background-color: #333; color: white; padding: 40px 0; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Campus Event Hub</h3>
+          <p style="color: #aaa; line-height: 1.6; margin-bottom: 20px;">Connecting students with events and activities across campus. Register, participate, and share your feedback.</p>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Quick Links</h3>
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><a href="index.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Register</a></li>
+            <li style="margin-bottom: 10px;"><a href="events.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Create Event</a></li>
+            <li style="margin-bottom: 10px;"><a href="register.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Join Event</a></li>
+            <li style="margin-bottom: 10px;"><a href="feedback.html" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Feedback</a></li>
+          </ul>
+        </div>
+        
+        <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 20px; font-size: 18px; color: #fff;">Contact Us</h3>
+          <p style="color: #aaa; margin-bottom: 10px;">Email: info@campuseventhub.com759
+          <p style="color: #aaa; margin-bottom: 10px;">Phone: +1 (123) 456-7890</p>
+          <p style="color: #aaa;">Address: 123 University Ave, Campus City</p>
+        </div>
+      </div>
+      
+      <div style="border-top: 1px solid #444; padding-top: 20px; margin-top: 20px; text-align: center;">
+        <p style="color: #aaa;">© 2025 Campus Event Hub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Logout functionality (preserved from original)
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    };
+
+    // Redirect to login if not authenticated
+    if (!localStorage.getItem('token')) {
+      window.location.href = 'login.html';
+    }
+
+    let myEventsList = [];
+
+    // Load user's events
+    async function loadUserEvents() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/my-events', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) {
+          document.getElementById('eventsContainer').innerHTML = '<div style="color: red; text-align: center;">Failed to load events. Please login again.</div>';
+          return;
+        }
+        const events = await response.json();
+        myEventsList = events;
+        renderEvents(events);
+      } catch (error) {
+        document.getElementById('eventsContainer').innerHTML = '<div style="color: red; text-align: center;">Failed to load events. Please login again.</div>';
+      }
+    }
+
+    // Render events with action buttons
+    function renderEvents(events) {
+      const container = document.getElementById('eventsContainer');
+      if (!events.length) {
+        container.innerHTML = '<div style="color: #666; text-align: center; padding: 40px 0;">You have not created any events yet.</div>';
+        return;
+      }
+      container.innerHTML = events.map(event => `
+        <div style="background: white; padding: 24px 28px; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <h3 style="color: #1e3c72; margin-bottom: 10px; font-size: 22px;">${event.name}</h3>
+          <p style="color: #666; margin-bottom: 6px;"><strong>Date:</strong> ${formatDateTime(event.date)}</p>
+          <p style="color: #666; margin-bottom: 6px;"><strong>Location:</strong> ${event.location}</p>
+          <p style="color: #666; margin-bottom: 6px;"><strong>Organizer:</strong> ${event.organizer}</p>
+          <p style="color: #666; margin-bottom: 16px;"><strong>Description:</strong> ${event.description}</p>
+          <p style="color: #666; margin-bottom: 16px;"><strong>Capacity:</strong> ${event.capacity}</p>
+          <div style="display: flex; gap: 10px;">
+            <button onclick="editEvent('${event._id}')" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; padding: 10px 22px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; transition: all 0.3s;">Edit</button>
+            <button onclick="deleteEvent('${event._id}')" style="background: #e53935; color: white; border: none; padding: 10px 22px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; transition: background 0.3s;">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function formatDateTime(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      return date.toLocaleString();
+    }
+
+    // Delete event
+    async function deleteEvent(eventId) {
+      if (!confirm('Are you sure you want to delete this event?')) return;
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/events/${eventId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('Event deleted successfully!');
+          loadUserEvents();
+        } else {
+          alert('Failed to delete event: ' + (result.message || ''));
+        }
+      } catch (error) {
+        alert('Delete failed. Please try again.');
+      }
+    }
+
+    // Open Edit Modal and populate fields
+    function editEvent(eventId) {
+      const event = myEventsList.find(ev => ev._id === eventId);
+      if (!event) return;
+
+      document.getElementById('editEventId').value = event._id;
+      document.getElementById('editName').value = event.name || '';
+      const [datePart, timePart] = (event.date || '').split('T');
+      document.getElementById('editDate').value = datePart || '';
+      document.getElementById('editTime').value = timePart ? timePart.substring(0,5) : '';
+      document.getElementById('editLocation').value = event.location || '';
+      document.getElementById('editOrganizer').value = event.organizer || '';
+      document.getElementById('editDescription').value = event.description || '';
+      document.getElementById('editCapacity').value = event.capacity || '';
+
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    // Close the modal
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Handle form submission for editing
+    document.getElementById('editForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('editEventId').value;
+      const name = document.getElementById('editName').value;
+      const date = document.getElementById('editDate').value;
+      const time = document.getElementById('editTime').value;
+      const location = document.getElementById('editLocation').value;
+      const organizer = document.getElementById('editOrganizer').value;
+      const description = document.getElementById('editDescription').value;
+      const capacity = document.getElementById('editCapacity').value;
+
+      const dateTime = `${date}T${time}:00`;
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/events/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name,
+            date: dateTime,
+            location,
+            organizer,
+            description,
+            capacity: capacity || undefined
+          })
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('Event updated successfully!');
+          closeEditModal();
+          loadUserEvents();
+        } else {
+          alert(`Failed to update event: ${result.message}`);
+        }
+      } catch (error) {
+        alert('Error updating event. Please try again.');
+      }
+    });
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', loadUserEvents);
+  </script>
+</body>
+</html>
