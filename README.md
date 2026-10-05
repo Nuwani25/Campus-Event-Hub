@@ -1,6 +1,6 @@
 # Campus Event Hub
 
-ampus Event Hub is a web application developed to practise automated testing using Cypress. It helps students create campus events, register for events and submit feedback.
+Campus Event Hub is a web application developed to practise automated testing using Cypress. It helps students create campus events, register for events and submit feedback.
 
 The project combines application development with automated testing using Cypress.
 
